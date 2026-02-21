@@ -1,5 +1,9 @@
 // Import packages, initialize an express app, and define the port you will use
-
+const express = require('express')
+const express = require('express');
+const { body, validationResult } = require('express-validator');
+const app = express();
+const port = 3000;
 
 
 // Data for the server
