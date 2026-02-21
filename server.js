@@ -196,18 +196,28 @@ app.put('/api/menus/:id',  menuValidation, handleValidationErrors,(req,res) =>{
 
 //DELETE
 app.delete('/api/menus/:id', (req, res) => {
-  const menuId = parseInt(req.params.id);
+  const menuId = parseInt(req.params.id, 10);
+
+  // Validate ID format
+  if (isNaN(menuId) || menuId <= 0) {
+    return res.status(400).json({
+      error: 'Invalid menu ID. ID must be a positive number.'
+    });
+  }
 
   const menuIndex = menuItems.findIndex(m => m.id === menuId);
 
+  // Check if item exists
   if (menuIndex === -1) {
-    return res.status(404).json({ error: 'Menu item not found' });
+    return res.status(404).json({
+      error: `Menu item with id ${menuId} not found`
+    });
   }
 
   const deletedMenuItem = menuItems.splice(menuIndex, 1)[0];
 
-  res.json({
-    message: 'Menu item deleted',
+  return res.status(200).json({
+    message: 'Menu item deleted successfully',
     menuItem: deletedMenuItem
   });
 });
