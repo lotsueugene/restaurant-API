@@ -87,3 +87,25 @@ app.get('/api/menus/:id', (req,res) =>{
     res.status(404).json({error: "Menu not found "})
   }
 });
+
+
+//Post| add new menu item
+app.post('/api/menus', (req,res) =>{
+  const {name, description, price, category, ingredients, available} = req.body;
+
+  const newMenuItem = {
+    id: menuItems.length + 1,
+    name,
+    description,
+    price,
+    category,
+    ingredients,
+    available
+  };
+
+  //add menu item
+  menuItems.push(newMenuItem);
+
+  res.status(201).json(newMenuItem)
+});
+
