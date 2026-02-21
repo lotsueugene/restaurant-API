@@ -67,11 +67,23 @@ app.use(express.json());
 
 
 // Routes
-app.get('/api/menu', (req,res) =>
+app.get('/api/menus', (req,res) =>
 {
   res.json(menuItems)
 });
 
 app.listen(port, () => {
     console.log(`Todo API running at http://localhost:${port}`);
+});
+
+//GET by Id
+app.get('/api/menus/:id', (req,res) =>{
+  const menuId = parseInt(req.params.id);
+  const menu = menuItems.find( m => m.id === menuId)
+
+  if (menu){
+    res.json(menu)
+  } else {
+    res.status(404).json({error: "Menu not found "})
+  }
 });
