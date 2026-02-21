@@ -1,5 +1,3 @@
-// Import packages, initialize an express app, and define the port you will use
-const express = require('express')
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const app = express();
@@ -64,4 +62,16 @@ const menuItems = [
   }
 ];
 
-// Define routes and implement middleware here
+// Built-in middleware for parsing JSON
+app.use(express.json());
+
+
+// Routes
+app.get('/api/menu', (req,res) =>
+{
+  res.json(menuItems)
+});
+
+app.listen(port, () => {
+    console.log(`Todo API running at http://localhost:${port}`);
+});
