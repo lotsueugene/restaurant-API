@@ -115,14 +115,14 @@ app.put('/api/menus/:id', (req,res) =>{
     const {name, description, price, category, ingredients, available} = req.body;
 
 
-    //Find book to update
+    //Find menu item to update
     const menuIndex = menuItems.findIndex(m => m.id === menuId)
 
     if (menuIndex === -1){
         return res.status(404).json({error: 'Menu item not found'})
     }
 
-    //Update books
+    //Update menuItems
     menuItems[menuIndex] ={
         id: menuId,
         name,
@@ -132,7 +132,7 @@ app.put('/api/menus/:id', (req,res) =>{
         ingredients, 
         available};
 
-    //Return the updated books
+    //Return the updated menuItems
     res.json(menuItems[menuIndex])
 });
 
