@@ -62,9 +62,25 @@ const menuItems = [
   }
 ];
 
+//Request logger
+const requestLogger = (req, res, next) => {
+    const timeStamp = new Date().toISOString();
+    console.log(`[${timeStamp}] ${req.method} ${req.originalUrl}`)
+
+    if(req.method === "POST" || req.method === "PUT") {
+        console.log("Request Body", JSON.stringify(req.body, null, 2))
+    }
+
+    next()
+}
+
+
+
 // Built-in middleware for parsing JSON
 app.use(express.json());
 
+// Custom logging middleware
+app.use(requestLogger);
 
 // Routes
 app.get('/api/menus', (req,res) =>
