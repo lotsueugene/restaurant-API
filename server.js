@@ -116,7 +116,8 @@ const handleValidationErrors = (req, res, next) => {
         messages: errorMessages
         });
     }
-  }
+     next();
+  };
 
 
 // Built-in middleware for parsing JSON
