@@ -172,7 +172,13 @@ app.put('/api/menus/:id',  menuValidation, handleValidationErrors,(req,res) =>{
     const menuId = parseInt(req.params.id);
     const {name, description, price, category, ingredients, available} = req.body;
 
-
+  // Validate ID format
+  if (isNaN(menuId) || menuId <= 0) {
+    return res.status(400).json({
+      error: 'Invalid menu ID. ID must be a positive number.'
+    });
+  }
+  
     //Find menu item to update
     const menuIndex = menuItems.findIndex(m => m.id === menuId)
 
