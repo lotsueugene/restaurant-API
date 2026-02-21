@@ -72,8 +72,51 @@ const requestLogger = (req, res, next) => {
     }
 
     next()
-}
+};
 
+//Validation
+const menuValidation = [
+  body('name')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('Name must be at least 3 characters long'),
+
+  body('description')
+    .trim()
+    .isLength({ min: 10 })
+    .withMessage('Description must be at least 10 characters long'),
+
+  body('price')
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a positive number'),
+
+  body('category')
+    .isIn(['entree', 'appetizer', 'dessert', 'beverage'])
+    .withMessage('Category must be entree, appetizer, dessert, or beverage'),
+
+  body('ingredients')
+    .isArray({ min: 1 })
+    .withMessage('Ingredients must be an array with at least one item'),
+
+  body('available')
+    .isBoolean()
+    .withMessage('Available must be true or false')
+];
+
+
+// Handle Validation Errors
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        const errorMessages = errors.array().map(error => error.msg);
+        
+        return res.status(400).json({
+        error: 'Validation failed',
+        messages: errorMessages
+        });
+    }
+  }
 
 
 // Built-in middleware for parsing JSON
@@ -104,7 +147,7 @@ app.get('/api/menus/:id', (req,res) =>{
 
 
 //Post| add new menu item
-app.post('/api/menus', (req,res) =>{
+app.post('/api/menus', menuValidation, handleValidationErrors,(req,res) =>{
   const {name, description, price, category, ingredients, available} = req.body;
 
   const newMenuItem = {
@@ -124,7 +167,7 @@ app.post('/api/menus', (req,res) =>{
 });
 
 //PUT | Update an existing menu item
-app.put('/api/menus/:id', (req,res) =>{
+app.put('/api/menus/:id',  menuValidation, handleValidationErrors,(req,res) =>{
     const menuId = parseInt(req.params.id);
     const {name, description, price, category, ingredients, available} = req.body;
 
