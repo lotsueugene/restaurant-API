@@ -72,9 +72,7 @@ app.get('/api/menus', (req,res) =>
   res.json(menuItems)
 });
 
-app.listen(port, () => {
-    console.log(`Todo API running at http://localhost:${port}`);
-});
+
 
 //GET by Id
 app.get('/api/menus/:id', (req,res) =>{
@@ -136,3 +134,25 @@ app.put('/api/menus/:id', (req,res) =>{
     res.json(menuItems[menuIndex])
 });
 
+//DELETE
+app.delete('/api/menus/:id', (req, res) => {
+  const menuId = parseInt(req.params.id);
+
+  const menuIndex = menuItems.findIndex(m => m.id === menuId);
+
+  if (menuIndex === -1) {
+    return res.status(404).json({ error: 'Menu item not found' });
+  }
+
+  const deletedMenuItem = menuItems.splice(menuIndex, 1)[0];
+
+  res.json({
+    message: 'Menu item deleted',
+    menuItem: deletedMenuItem
+  });
+});
+
+
+app.listen(port, () => {
+    console.log(`Todo API running at http://localhost:${port}`);
+});
