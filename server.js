@@ -62,6 +62,7 @@ const menuItems = [
   }
 ];
 
+
 //Request logger
 const requestLogger = (req, res, next) => {
     const timeStamp = new Date().toISOString();
@@ -87,8 +88,8 @@ const menuValidation = [
     .withMessage('Description must be at least 10 characters long'),
 
   body('price')
-    .isFloat({ min: 0 })
-    .withMessage('Price must be a positive number'),
+    .isFloat({ gt: 0 })
+    .withMessage('Price must be greater than 0'),
 
   body('category')
     .isIn(['entree', 'appetizer', 'dessert', 'beverage'])
@@ -99,6 +100,7 @@ const menuValidation = [
     .withMessage('Ingredients must be an array with at least one item'),
 
   body('available')
+    .optional()
     .isBoolean()
     .withMessage('Available must be true or false')
 ];
@@ -127,7 +129,7 @@ app.use(express.json());
 app.use(requestLogger);
 
 // Routes
-app.get('/api/menus', (req,res) =>
+app.get('/api/menu', (req,res) =>
 {
   res.json(menuItems)
 });
@@ -135,7 +137,7 @@ app.get('/api/menus', (req,res) =>
 
 
 //GET by Id
-app.get('/api/menus/:id', (req,res) =>{
+app.get('/api/menu/:id', (req,res) =>{
   const menuId = parseInt(req.params.id);
   const menu = menuItems.find( m => m.id === menuId)
 
@@ -147,18 +149,21 @@ app.get('/api/menus/:id', (req,res) =>{
 });
 
 
+//Unique IDs 
+let nextId = menuItems.length + 1;
+
 //Post| add new menu item
-app.post('/api/menus', menuValidation, handleValidationErrors,(req,res) =>{
+app.post('/api/menu', menuValidation, handleValidationErrors,(req,res) =>{
   const {name, description, price, category, ingredients, available} = req.body;
 
   const newMenuItem = {
-    id: menuItems.length + 1,
+    id: nextId++,
     name,
     description,
     price,
     category,
     ingredients,
-    available
+    available: available !== undefined ? available : true
   };
 
   //add menu item
@@ -168,9 +173,15 @@ app.post('/api/menus', menuValidation, handleValidationErrors,(req,res) =>{
 });
 
 //PUT | Update an existing menu item
-app.put('/api/menus/:id',  menuValidation, handleValidationErrors,(req,res) =>{
+app.put('/api/menu/:id',  menuValidation, handleValidationErrors,(req,res) =>{
     const menuId = parseInt(req.params.id);
-    const {name, description, price, category, ingredients, available} = req.body;
+    const {name,
+      description,
+      price, 
+      category, 
+      ingredients,
+       available
+      } = req.body;
 
   // Validate ID format
   if (isNaN(menuId) || menuId <= 0) {
@@ -201,7 +212,7 @@ app.put('/api/menus/:id',  menuValidation, handleValidationErrors,(req,res) =>{
 });
 
 //DELETE
-app.delete('/api/menus/:id', (req, res) => {
+app.delete('/api/menu/:id', (req, res) => {
   const menuId = parseInt(req.params.id, 10);
 
   // Validate ID format
@@ -230,5 +241,5 @@ app.delete('/api/menus/:id', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Todo API running at http://localhost:${port}`);
+    console.log(`Restaurant API running at http://localhost:${port}`);
 });
